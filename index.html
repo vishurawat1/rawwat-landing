@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rawwat Docs — Enterprise Technical Document Intelligence & PDF Query Engine</title>
+    <meta name="description"
+        content="Turn dense technical specs, API schemas, and compliance PDFs into verified, citation-backed answers with zero hallucination. Built for engineering and compliance teams." />
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#0f172a',
+                            900: '#0b1120',
+                            950: '#030712',
+                        },
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4' },
+                            '50%': { opacity: '0.8' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom sleek scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+
+        /* Subtle grid background */
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Glowing text gradient */
+        .text-glow {
+            text-shadow: 0 0 30px rgba(139, 92, 246, 0.35);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-violet-500 selection:text-white antialiased relative overflow-x-hidden">
+
+    <!-- Ambient Gradient Background Elements -->
+    <div class="fixed inset-0 pointer-events-none bg-grid-pattern z-0 opacity-80"></div>
+    <div class="fixed top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-violet-600/15 rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed top-[40%] right-[-10%] w-[500px] h-[400px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/75 border-b border-slate-800/80 transition-all duration-200">
+        <div class="max-w-6xl mx-auto px-6 h-18 py-4 flex justify-between items-center">
+            <!-- Left: Minimal Logo with Pulsing Violet Dot -->
+            <a href="#" class="flex items-center gap-3 group" id="nav-brand-logo">
+                <div class="relative flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 group-hover:border-violet-500/50 transition">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-violet-500 shadow-[0_0_10px_#8b5cf6]"></span>
+                    </span>
+                </div>
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-lg font-bold tracking-tight text-white group-hover:text-violet-200 transition">Rawwat</span>
+                    <span class="text-xs font-semibold tracking-wide uppercase px-2 py-0.5 rounded bg-violet-500/10 text-violet-400 border border-violet-500/20">Docs</span>
+                </div>
+            </a>
+
+            <!-- Right: Contact Mailto Link & Action -->
+            <div class="flex items-center gap-4 sm:gap-6">
+                <a href="mailto:vishwajeetrawat@rawwat.com" 
+                   id="nav-contact-link"
+                   class="text-sm font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5 py-1 px-2 rounded-md hover:bg-slate-900/60">
+                    <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>Contact</span>
+                </a>
+                <a href="mailto:vishwajeetrawat@rawwat.com?subject=Early Access Request"
+                   id="nav-cta-btn"
+                   class="hidden sm:inline-flex items-center justify-center text-xs font-semibold px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-850 text-slate-200 border border-slate-750 hover:border-violet-500/40 transition shadow-sm">
+                    Request Demo
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow">
+        <!-- Hero Section -->
+        <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center" id="hero-section">
+            <!-- Tag Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium bg-violet-950/50 border border-violet-500/30 text-violet-300 shadow-[0_0_20px_rgba(139,92,246,0.2)] mb-8 backdrop-blur-md">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                <span>Enterprise Document Intelligence</span>
+                <span class="text-violet-500/60">|</span>
+                <span class="text-slate-400 font-normal">Deterministic PDF Engine</span>
+            </div>
+
+            <!-- Main Headline -->
+            <h1 class="text-4xl sm:text-6xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.12] max-w-4xl mx-auto text-glow">
+                Turn Dense Technical Specs & Documentation into <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-indigo-200 to-white">Instant Answers.</span>
+            </h1>
+
+            <!-- Subhead -->
+            <p class="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
+                Ingest multi-thousand page architecture docs, API schemas, and compliance PDFs with citation-level precision.
+            </p>
+
+            <!-- Primary CTA Button -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <a href="mailto:vishwajeetrawat@rawwat.com?subject=Early Access Request"
+                   id="hero-cta-btn"
+                   class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-700 hover:from-violet-500 hover:via-indigo-500 hover:to-violet-600 shadow-[0_0_35px_rgba(139,92,246,0.35)] hover:shadow-[0_0_45px_rgba(139,92,246,0.55)] border border-violet-400/30 transition-all duration-300 hover:-translate-y-0.5">
+                    <span>Get Early Access</span>
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
+                <a href="#interactive-preview"
+                   id="hero-view-demo-btn"
+                   class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-medium text-slate-300 bg-slate-900/80 hover:bg-slate-850 hover:text-white border border-slate-800 hover:border-slate-700 transition">
+                    <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <span>Inspect Live Query Sample</span>
+                </a>
+            </div>
+
+            <!-- Trust Bar / Key Proof Points -->
+            <div class="pt-4 border-t border-slate-900 max-w-3xl mx-auto flex flex-wrap items-center justify-center gap-8 text-xs font-medium text-slate-400">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>100% Deterministic Extraction</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Zero LLM Hallucinations</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>SOC-2 & On-Prem Ready</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature / Capability Grid -->
+        <section class="max-w-6xl mx-auto px-6 py-16" id="features-section">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-3">
+                    Engineered for Rigorous Technical Workflows
+                </h2>
+                <p class="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
+                    Traditional search and generic chat models fail on complex engineering specs. Rawwat Docs parses and indexes documents with surgical accuracy.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1: Deep Document Ingestion -->
+                <div class="group relative rounded-2xl bg-slate-900/60 hover:bg-slate-900/90 border border-slate-800 hover:border-violet-500/40 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-950/20 backdrop-blur-sm flex flex-col justify-between">
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div>
+                        <!-- Icon Box -->
+                        <div class="w-12 h-12 rounded-xl bg-violet-950/60 border border-violet-500/30 flex items-center justify-center mb-6 text-violet-400 group-hover:scale-105 group-hover:border-violet-400/50 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-3 group-hover:text-violet-200 transition">
+                            Deep Document Ingestion
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                            Multi-hundred page PDF processing with full context retention across complex tables, multi-column layouts, and technical diagrams.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center gap-2 text-xs font-mono text-slate-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                        <span>Tables &bull; Schemas &bull; 1,000+ Pages</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Citation-Backed Extraction -->
+                <div class="group relative rounded-2xl bg-slate-900/60 hover:bg-slate-900/90 border border-slate-800 hover:border-violet-500/40 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-950/20 backdrop-blur-sm flex flex-col justify-between">
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div>
+                        <!-- Icon Box -->
+                        <div class="w-12 h-12 rounded-xl bg-violet-950/60 border border-violet-500/30 flex items-center justify-center mb-6 text-violet-400 group-hover:scale-105 group-hover:border-violet-400/50 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-3 group-hover:text-violet-200 transition">
+                            Citation-Backed Extraction
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                            Direct source referencing with page numbers and exact paragraph traceability to eliminate hallucinations and meet compliance audits.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center gap-2 text-xs font-mono text-slate-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                        <span>Exact Page &amp; Clause Anchors</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Developer-First API -->
+                <div class="group relative rounded-2xl bg-slate-900/60 hover:bg-slate-900/90 border border-slate-800 hover:border-violet-500/40 p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-950/20 backdrop-blur-sm flex flex-col justify-between">
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-b from-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div>
+                        <!-- Icon Box -->
+                        <div class="w-12 h-12 rounded-xl bg-violet-950/60 border border-violet-500/30 flex items-center justify-center mb-6 text-violet-400 group-hover:scale-105 group-hover:border-violet-400/50 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-3 group-hover:text-violet-200 transition">
+                            Developer-First API
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                            Simple REST & webhook integrations to query your internal knowledge base straight from your CLI, CI/CD pipelines, or microservices.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center gap-2 text-xs font-mono text-slate-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                        <span>REST &bull; Webhooks &bull; Python / Node SDK</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive / Visual Mockup Card -->
+        <section class="max-w-5xl mx-auto px-6 py-12" id="interactive-preview">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800 text-slate-400 mb-3">
+                    <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+                    <span>Live Architecture Sandbox</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                    See How Verified Extraction Works in Practice
+                </h2>
+                <p class="text-sm text-slate-400 max-w-lg mx-auto mt-2">
+                    Every statement synthesized by Rawwat Docs links directly to indexed source bytes.
+                </p>
+            </div>
+
+            <!-- Mockup Window Container -->
+            <div class="relative rounded-2xl border border-slate-800 bg-slate-900/90 shadow-[0_0_50px_rgba(15,23,42,0.8)] shadow-violet-950/20 backdrop-blur-xl overflow-hidden">
+                <!-- Window Header / Title Bar -->
+                <div class="px-5 py-3.5 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <!-- macOS style window controls -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-slate-700/80"></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-700/80"></span>
+                            <span class="w-3 h-3 rounded-full bg-slate-700/80"></span>
+                        </div>
+                        <span class="text-slate-600 text-xs">|</span>
+                        <!-- Document badge -->
+                        <div class="flex items-center gap-2 text-xs font-medium text-slate-300 bg-slate-900 px-3 py-1 rounded-md border border-slate-800">
+                            <svg class="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <span class="font-mono text-slate-200">RFC-9110-HTTP-Semantics.pdf</span>
+                            <span class="text-[10px] text-slate-400 font-mono">(412 pages)</span>
+                        </div>
+                    </div>
+
+                    <!-- Right Status Indicator -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[11px]">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Indexed &bull; Verified 0-Hallucination
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Window Content Body -->
+                <div class="p-6 sm:p-8 space-y-6">
+                    <!-- User Prompt / Query Input simulation -->
+                    <div>
+                        <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Natural Language Query</span>
+                        </div>
+                        <div class="relative rounded-xl bg-slate-950 border border-slate-800 p-4 flex items-start sm:items-center justify-between gap-4 shadow-inner">
+                            <div class="flex items-center gap-3">
+                                <div class="w-7 h-7 rounded-lg bg-violet-600/20 text-violet-400 flex items-center justify-center font-mono text-xs font-bold shrink-0">
+                                    Q
+                                </div>
+                                <p class="text-sm sm:text-base font-medium text-white">
+                                    "What are the authentication timeout parameters specified in RFC 9110?"
+                                </p>
+                            </div>
+                            <span class="hidden sm:inline-flex items-center text-[11px] font-mono text-slate-400 bg-slate-900 px-2.5 py-1 rounded border border-slate-800 shrink-0">
+                                142ms latency
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Verified Response Block -->
+                    <div class="rounded-xl bg-slate-950/70 border border-slate-800/90 p-5 sm:p-6 space-y-5">
+                        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-850">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-md bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-semibold text-slate-200 tracking-wide uppercase">Rawwat Structured Response</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-mono text-emerald-400 bg-emerald-950/50 border border-emerald-800/60 px-2 py-0.5 rounded">
+                                    Confidence: 99.98%
+                                </span>
+                                <span class="text-[11px] font-mono text-violet-300 bg-violet-950/50 border border-violet-800/60 px-2 py-0.5 rounded">
+                                    3 Citations Verified
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Summary Prose -->
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            According to <strong class="text-white">RFC 9110 (HTTP Semantics)</strong>, authentication parameters do not prescribe a single static global timeout; instead, the specification establishes strict protocol parameters across challenge freshness, idle session limits, and request timeouts:
+                        </p>
+
+                        <!-- Structured Parameters Table -->
+                        <div class="overflow-x-auto rounded-lg border border-slate-800 bg-slate-900/60">
+                            <table class="w-full text-left text-xs font-mono">
+                                <thead class="bg-slate-850 text-slate-400 border-b border-slate-800">
+                                    <tr>
+                                        <th class="py-2.5 px-4 font-semibold">Parameter / Directive</th>
+                                        <th class="py-2.5 px-4 font-semibold">Section</th>
+                                        <th class="py-2.5 px-4 font-semibold">Specification Requirement</th>
+                                        <th class="py-2.5 px-4 font-semibold text-right">Source Trace</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                                    <tr class="hover:bg-slate-850/50 transition">
+                                        <td class="py-3 px-4 font-medium text-violet-300">Auth Challenge Freshness</td>
+                                        <td class="py-3 px-4 text-slate-400">§ 11.2</td>
+                                        <td class="py-3 px-4 font-sans text-xs">Origin servers SHOULD expire authentication nonces and stale challenges within bounded window (typically 60s).</td>
+                                        <td class="py-3 px-4 text-right">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20 text-[11px]">
+                                                Page 42, § 11.2
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-850/50 transition">
+                                        <td class="py-3 px-4 font-medium text-violet-300">408 Request Timeout</td>
+                                        <td class="py-3 px-4 text-slate-400">§ 15.5.9</td>
+                                        <td class="py-3 px-4 font-sans text-xs">Server did not receive a complete authentication header or request within configured server idle threshold.</td>
+                                        <td class="py-3 px-4 text-right">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20 text-[11px]">
+                                                Page 88, § 15.5.9
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-850/50 transition">
+                                        <td class="py-3 px-4 font-medium text-violet-300">Keep-Alive Timeout Directive</td>
+                                        <td class="py-3 px-4 text-slate-400">§ 17.1</td>
+                                        <td class="py-3 px-4 font-sans text-xs">Specifies minimum host connection retention limit before unauthenticated TCP transport termination.</td>
+                                        <td class="py-3 px-4 text-right">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20 text-[11px]">
+                                                Page 104, § 17.1
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Source Traceability & Excerpt Drawer -->
+                        <div class="rounded-lg bg-slate-900 border border-slate-800 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                    </svg>
+                                    <span>Verified Extracted Excerpt</span>
+                                </div>
+                                <span class="text-[10px] font-mono text-emerald-400">Byte Range: 0x4B219 - 0x4B3A0</span>
+                            </div>
+                            <blockquote class="text-xs text-slate-300 italic border-l-2 border-violet-500 pl-3 py-1 font-mono bg-slate-950/40 rounded-r">
+                                "An origin server MUST enforce a finite timeout on unauthenticated authentication challenges to protect against connection exhaustion and denial-of-service states..."
+                            </blockquote>
+                        </div>
+
+                        <!-- Action Toolbar -->
+                        <div class="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div class="flex items-center gap-2">
+                                <button id="btn-copy-citation" onclick="copyCitationData()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 hover:border-slate-600 transition flex items-center gap-1.5 font-medium">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                    <span id="copy-citation-text">Copy Citation JSON</span>
+                                </button>
+                                <a href="mailto:vishwajeetrawat@rawwat.com?subject=Custom%20Document%20Index%20Inquiry" class="px-3 py-1.5 rounded-lg bg-slate-800/50 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition">
+                                    Test on your PDF &rarr;
+                                </a>
+                            </div>
+                            <div class="text-[11px] text-slate-500 font-mono">
+                                Engine: Rawwat-v2.4-deterministic
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pre-Footer CTA Section -->
+        <section class="max-w-4xl mx-auto px-6 py-20 text-center">
+            <div class="rounded-3xl bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800 p-10 sm:p-14 relative overflow-hidden">
+                <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
+                        Ready to automate dense document verification?
+                    </h2>
+                    <p class="text-slate-400 text-base max-w-xl mx-auto mb-8">
+                        Join engineering and compliance leaders using Rawwat Docs to verify technical documentation with mathematical certainty.
+                    </p>
+                    <a href="mailto:vishwajeetrawat@rawwat.com?subject=Early Access Request"
+                       id="bottom-cta-btn"
+                       class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-700 hover:from-violet-500 hover:via-indigo-500 hover:to-violet-600 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:shadow-[0_0_40px_rgba(139,92,246,0.5)] border border-violet-400/30 transition-all duration-300">
+                        <span>Get Early Access</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950/80 py-10 relative z-10">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            <!-- Clean Copyright Line -->
+            <div>
+                <p id="footer-copyright">© 2026 Rawwat Technologies. All rights reserved.</p>
+            </div>
+
+            <!-- Contact Link & Domain -->
+            <div class="flex items-center gap-6">
+                <a href="mailto:vishwajeetrawat@rawwat.com" id="footer-contact-link" class="text-slate-400 hover:text-violet-400 transition">
+                    vishwajeetrawat@rawwat.com
+                </a>
+                <span class="text-slate-800">&bull;</span>
+                <span class="font-mono text-slate-600">rawwat.com</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive script for demo copy citation -->
+    <script>
+        function copyCitationData() {
+            const citationJson = JSON.stringify({
+                document: "RFC-9110-HTTP-Semantics.pdf",
+                query: "What are the authentication timeout parameters specified in RFC 9110?",
+                citations: [
+                    { parameter: "Auth Challenge Freshness", section: "11.2", page: 42, threshold: "60s bounded nonces" },
+                    { parameter: "408 Request Timeout", section: "15.5.9", page: 88, threshold: "server-configured idle window" },
+                    { parameter: "Keep-Alive Timeout", section: "17.1", page: 104, threshold: "connection retention directive" }
+                ],
+                confidence: 0.9998,
+                verifiedBy: "Rawwat Engine v2.4"
+            }, null, 2);
+
+            navigator.clipboard.writeText(citationJson).then(() => {
+                const btnText = document.getElementById('copy-citation-text');
+                const orig = btnText.innerText;
+                btnText.innerText = 'Copied to Clipboard!';
+                setTimeout(() => {
+                    btnText.innerText = orig;
+                }, 2000);
+            }).catch(err => {
+                console.warn('Clipboard write failed:', err);
+            });
+        }
+    </script>
+</body>
+
+</html>
